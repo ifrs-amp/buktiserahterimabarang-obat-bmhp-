@@ -26,6 +26,8 @@
   .btn-success:hover { background:#2e7d32; }
   .btn-save    { background:#f57c00; color:#fff; }
   .btn-save:hover { background:#e65100; }
+  .btn-refresh { background:#607d8b; color:#fff; padding:4px 10px; font-size:11px; }
+  .btn-refresh:hover { background:#455a64; }
   .btn-group { margin-top:20px; display:flex; gap:10px; flex-wrap:wrap; }
   .btn-group .btn { flex:1; min-width:110px; }
 
@@ -48,22 +50,24 @@
   table.barang-form input { border:none; padding:5px; font-size:12px; }
   table.barang-form input:focus { outline:2px solid #1a73e8; }
 
-  /* ===== RIWAYAT SURAT ===== */
+  /* ===== RIWAYAT ===== */
   .riwayat-section { margin-top:25px; padding-top:15px; border-top:2px dashed #ccc; }
-  .riwayat-header { display:flex; justify-content:space-between; align-items:center; }
+  .riwayat-header { display:flex; justify-content:space-between; align-items:center; gap:8px; }
   .riwayat-header h3 { margin:0; font-size:13px; color:#1a3d6d; }
+  .riwayat-header > div { display:flex; gap:6px; align-items:center; }
   .riwayat-count { background:#1a73e8; color:#fff; font-size:11px; padding:2px 8px; border-radius:10px; font-weight:bold; }
 
-  .riwayat-list { margin-top:10px; max-height:280px; overflow-y:auto; }
+  .riwayat-list { margin-top:10px; max-height:320px; overflow-y:auto; }
   .riwayat-item {
     background:#f8f9fa; border-left:3px solid #1a73e8; padding:8px 10px;
     border-radius:5px; margin-bottom:8px; font-size:11.5px;
     position:relative; cursor:pointer; transition:background 0.15s;
   }
   .riwayat-item:hover { background:#e8f0fe; }
-  .riwayat-item .judul { font-weight:bold; color:#0d47a1; margin-bottom:3px; }
+  .riwayat-item .judul { font-weight:bold; color:#0d47a1; margin-bottom:3px; padding-right:22px; }
   .riwayat-item .perihal { color:#555; margin-bottom:2px; }
   .riwayat-item .tanggal { color:#888; font-size:10.5px; }
+  .riwayat-item .petugas { color:#f57c00; font-size:10.5px; font-weight:bold; }
   .riwayat-item .hapus-riwayat {
     position:absolute; top:6px; right:6px;
     background:#e53935; color:#fff; border:none;
@@ -72,6 +76,7 @@
   }
   .riwayat-item .hapus-riwayat:hover { background:#b71c1c; }
   .riwayat-empty { text-align:center; color:#999; font-size:12px; padding:15px; font-style:italic; }
+  .riwayat-loading { text-align:center; color:#1a73e8; font-size:12px; padding:15px; }
 
   /* ====== DOKUMEN ====== */
   .preview-wrap { overflow-x:auto; }
@@ -131,7 +136,6 @@
   .badge-footer .b1 { color:#c00; font-weight:bold; font-size:14px; font-style:italic; }
   .badge-footer .b2 { font-size:8px; color:#666; line-height:1.1; }
 
-  /* ===== TOAST NOTIFIKASI ===== */
   #toast {
     position:fixed; bottom:30px; right:30px;
     background:#43a047; color:#fff;
@@ -140,9 +144,11 @@
     box-shadow:0 4px 12px rgba(0,0,0,.2);
     opacity:0; transform:translateY(20px);
     transition:all 0.3s; pointer-events:none; z-index:9999;
+    max-width:320px;
   }
   #toast.show { opacity:1; transform:translateY(0); }
   #toast.error { background:#e53935; }
+  #toast.info { background:#1a73e8; }
 
   @media print {
     body { background:#fff; }
@@ -160,6 +166,10 @@
   <!-- ================= FORM ADMIN ================= -->
   <div class="panel">
     <h2>📝 Form Isi Dokumen</h2>
+
+    <h3 class="sec">PETUGAS</h3>
+    <label>Nama Petugas (untuk tracking)</label>
+    <input id="f_petugas" placeholder="Ketik nama Anda..." style="background:#fff3cd; border-color:#ffb300; font-weight:600;">
 
     <h3 class="sec">DOKUMEN</h3>
     <label>Nomor</label>
@@ -205,9 +215,6 @@
       <b>Nama:</b> Helen Tapilouw, S.Si., Apt<br>
       <b>NIP:</b> 197507202005022003<br>
       <b>Jabatan:</b> Kepala Instalasi Farmasi RSUD Aji Muhammad Parikesit Tenggarong
-      <div style="margin-top:6px; font-size:11px; color:#555;">
-        ⚙️ Data ini otomatis muncul di paragraf dokumen.
-      </div>
     </div>
 
     <h3 class="sec">DENGAN INI KAMI MENYERAHKAN KEPADA</h3>
@@ -245,26 +252,26 @@
       <b>NIP:</b> 197507202005022003<br>
       <b>Jabatan:</b> Kepala Instalasi Farmasi<br>
       RSUD Aji Muhammad Parikesit Tenggarong
-      <div style="margin-top:6px; font-size:11px; color:#555;">
-        ⚙️ Data ini otomatis muncul di bagian "Mengetahui".
-      </div>
     </div>
 
-    <!-- ============ TOMBOL AKSI ============ -->
+    <!-- TOMBOL AKSI -->
     <div class="btn-group">
-      <button class="btn btn-primary" onclick="window.print()">🖨️ Cetak Berkas</button>
+      <button class="btn btn-primary" onclick="window.print()">🖨️ Cetak</button>
       <button class="btn btn-save" onclick="simpanKeRiwayat()">💾 Simpan</button>
       <button class="btn btn-danger" onclick="resetForm()">Reset</button>
     </div>
 
-    <!-- ============ RIWAYAT SURAT ============ -->
+    <!-- RIWAYAT SURAT -->
     <div class="riwayat-section">
       <div class="riwayat-header">
-        <h3>📚 Riwayat Surat</h3>
-        <span class="riwayat-count" id="riwayatCount">0</span>
+        <h3>📚 Riwayat Surat (Online)</h3>
+        <div>
+          <span class="riwayat-count" id="riwayatCount">0</span>
+          <button class="btn btn-refresh" onclick="loadRiwayatOnline()" title="Refresh">🔄</button>
+        </div>
       </div>
       <div class="riwayat-list" id="riwayatList">
-        <div class="riwayat-empty">Belum ada surat tersimpan.<br>Klik <b>💾 Simpan</b> untuk menyimpan.</div>
+        <div class="riwayat-loading">⏳ Memuat riwayat...</div>
       </div>
     </div>
 
@@ -312,7 +319,6 @@
         Pada hari ini <b id="p_hari">-</b> tanggal <b id="p_tgl_angka">-</b> bulan <b id="p_bulan">-</b> tahun <b id="p_tahun_terbilang">-</b> kami yang bertanda tangan dibawah ini:
       </div>
 
-      <!-- DATA PENYERAH (STATIS) -->
       <div class="info">
         <table>
           <tr><td class="l">Nama</td><td class="t">:</td><td>Helen Tapilouw, S.Si., Apt</td></tr>
@@ -323,7 +329,6 @@
 
       <div class="paragraf">Dengan ini kami menyerahkan kepada :</div>
 
-      <!-- DATA PENERIMA -->
       <div class="info">
         <table>
           <tr><td class="l">Nama</td><td class="t">:</td><td id="p_nama_terima"><i style="color:#aaa;">(belum diisi)</i></td></tr>
@@ -352,7 +357,6 @@
 
       <div style="text-align:right; margin-top:15px;" id="p_kota_tgl">Tenggarong, 29 September 2026</div>
 
-      <!-- TTD MENYERAHKAN & MENERIMA -->
       <div class="ttd-wrap">
         <div class="ttd-box">
           <div>Yang Menyerahkan</div>
@@ -368,7 +372,6 @@
         </div>
       </div>
 
-      <!-- MENGETAHUI (STATIS) -->
       <div class="mengetahui">
         <div class="judul-mengetahui">Mengetahui,</div>
         <div class="jabatan">Kepala Instalasi Farmasi</div>
@@ -378,7 +381,6 @@
         <div class="nip">NIP. 197507202005022003</div>
       </div>
 
-      <!-- BADGE FOOTER -->
       <div class="badge-footer">
         <div class="b1">BerkAHKLAh</div>
         <div class="b2">bangga<br>melayani<br>bangsa</div>
@@ -389,12 +391,16 @@
 
 </div>
 
-<!-- TOAST -->
 <div id="toast">✅ Berhasil!</div>
 
 <script>
 // ============================================================
-// 1. MAPPING FIELD -> ELEMEN PREVIEW
+// ⚙️ KONFIGURASI — GANTI DENGAN URL APPS SCRIPT ANDA
+// ============================================================
+const APPS_SCRIPT_URL = 'PASTE_URL_APPS_SCRIPT_DISINI';
+
+// ============================================================
+// 1. MAPPING FIELD -> PREVIEW
 // ============================================================
 const map = {
   f_nomor:'p_nomor', f_perihal:'p_perihal',
@@ -412,17 +418,20 @@ Object.keys(map).forEach(id => {
       const target = document.getElementById(map[id]);
       const val = (el.value || '').trim();
       if (id === 'f_nama_terima' || id === 'f_alamat_terima') {
-        if (val) {
-          target.textContent = val;
-        } else {
-          target.innerHTML = '<i style="color:#aaa;">(belum diisi)</i>';
-        }
+        if (val) target.textContent = val;
+        else target.innerHTML = '<i style="color:#aaa;">(belum diisi)</i>';
       } else {
         target.textContent = val || '-';
       }
-      simpan();
+      simpanLokal();
     });
   });
+});
+
+// Auto-save nama petugas
+const petugasEl = document.getElementById('f_petugas');
+petugasEl.addEventListener('input', () => {
+  localStorage.setItem('petugasNama', petugasEl.value);
 });
 
 // ============================================================
@@ -514,7 +523,7 @@ function renderBarang() {
       if (previewRow) {
         previewRow.children[cellMap[k]].textContent = e.target.value || (k==='expire'?'-':'');
       }
-      simpan();
+      simpanLokal();
     });
   });
 }
@@ -522,27 +531,31 @@ function renderBarang() {
 function tambahBaris() {
   barangData.push({ nama:'', satuan:'', jumlah:'', expire:'' });
   renderBarang();
-  simpan();
+  simpanLokal();
 }
 
 function hapusBaris(i) {
   if (barangData.length === 1) { alert('Minimal 1 baris'); return; }
   barangData.splice(i, 1);
   renderBarang();
-  simpan();
+  simpanLokal();
 }
 
 // ============================================================
-// 4. AUTOSAVE FORM (draft saat ini)
+// 4. AUTOSAVE LOKAL (draft)
 // ============================================================
-function simpan() {
+function simpanLokal() {
   const data = {};
   document.querySelectorAll('input, textarea, select').forEach(el => { if (el.id) data[el.id] = el.value; });
   data.__barang = barangData;
   localStorage.setItem('buktiSerahData', JSON.stringify(data));
 }
 
-function muat() {
+function muatLokal() {
+  // Load nama petugas
+  const petugas = localStorage.getItem('petugasNama');
+  if (petugas) petugasEl.value = petugas;
+
   const raw = localStorage.getItem('buktiSerahData');
   if (!raw) { renderBarang(); return; }
   try {
@@ -565,27 +578,20 @@ function resetForm() {
 }
 
 // ============================================================
-// 5. RIWAYAT SURAT
+// 5. SIMPAN KE GOOGLE SHEETS
 // ============================================================
-const RIWAYAT_KEY = 'buktiSerahRiwayat';
+async function simpanKeRiwayat() {
+  const petugas = (petugasEl.value || '').trim();
+  if (!petugas) {
+    showToast('❌ Isi Nama Petugas dulu!', true);
+    petugasEl.focus();
+    return;
+  }
 
-function getRiwayat() {
-  try {
-    return JSON.parse(localStorage.getItem(RIWAYAT_KEY) || '[]');
-  } catch(e) { return []; }
-}
-
-function setRiwayat(arr) {
-  localStorage.setItem(RIWAYAT_KEY, JSON.stringify(arr));
-}
-
-function simpanKeRiwayat() {
-  // Ambil data form sekarang
   const data = {};
   document.querySelectorAll('input, textarea, select').forEach(el => { if (el.id) data[el.id] = el.value; });
   data.__barang = barangData;
 
-  // Validasi minimal
   if (!data.f_nomor || !data.f_nomor.trim()) {
     showToast('❌ Nomor surat belum diisi!', true);
     return;
@@ -595,104 +601,177 @@ function simpanKeRiwayat() {
     return;
   }
 
-  // Buat entry riwayat
-  const entry = {
-    id: Date.now(),
-    savedAt: new Date().toISOString(),
-    nomor: data.f_nomor,
-    perihal: data.f_perihal,
-    namaTerima: data.f_nama_terima,
-    tanggalKota: data.f_kota_tgl,
-    data: data
-  };
-
-  const riwayat = getRiwayat();
-
-  // Cek duplikat nomor surat
-  const idx = riwayat.findIndex(r => r.nomor === entry.nomor);
-  if (idx >= 0) {
-    if (!confirm(`Surat dengan nomor "${entry.nomor}" sudah ada di riwayat.\n\nTimpa dengan data terbaru?`)) {
-      return;
-    }
-    riwayat[idx] = entry;
-  } else {
-    riwayat.unshift(entry); // terbaru di atas
-  }
-
-  setRiwayat(riwayat);
-  renderRiwayat();
-  showToast('✅ Surat berhasil disimpan ke riwayat!');
-}
-
-function loadRiwayat(id) {
-  const riwayat = getRiwayat();
-  const item = riwayat.find(r => r.id === id);
-  if (!item) return;
-
-  if (!confirm(`Muat kembali surat nomor "${item.nomor}"?\n\nData form saat ini akan tertimpa.`)) return;
-
-  // Isi form
-  Object.keys(item.data).forEach(key => {
-    if (key === '__barang') return;
-    const el = document.getElementById(key);
-    if (el) {
-      el.value = item.data[key];
-      el.dispatchEvent(new Event('input'));
-      el.dispatchEvent(new Event('change'));
-    }
-  });
-
-  // Isi tabel barang
-  if (Array.isArray(item.data.__barang) && item.data.__barang.length) {
-    barangData = item.data.__barang;
-  } else {
-    barangData = [{ nama:'', satuan:'', jumlah:'', expire:'' }];
-  }
-  renderBarang();
-
-  showToast(`📂 Surat "${item.nomor}" berhasil dimuat`);
-  window.scrollTo({ top:0, behavior:'smooth' });
-}
-
-function hapusRiwayat(id) {
-  const riwayat = getRiwayat();
-  const item = riwayat.find(r => r.id === id);
-  if (!item) return;
-
-  if (!confirm(`Hapus surat "${item.nomor}" dari riwayat?`)) return;
-
-  const baru = riwayat.filter(r => r.id !== id);
-  setRiwayat(baru);
-  renderRiwayat();
-  showToast('🗑️ Surat dihapus dari riwayat');
-}
-
-function renderRiwayat() {
-  const list = document.getElementById('riwayatList');
-  const count = document.getElementById('riwayatCount');
-  const riwayat = getRiwayat();
-
-  count.textContent = riwayat.length;
-
-  if (riwayat.length === 0) {
-    list.innerHTML = '<div class="riwayat-empty">Belum ada surat tersimpan.<br>Klik <b>💾 Simpan</b> untuk menyimpan.</div>';
+  if (APPS_SCRIPT_URL.includes('PASTE_URL')) {
+    showToast('⚠️ URL Apps Script belum diisi!', true);
     return;
   }
 
-  list.innerHTML = riwayat.map(r => {
-    const tgl = new Date(r.savedAt);
-    const tglStr = tgl.toLocaleDateString('id-ID', { day:'2-digit', month:'short', year:'numeric' }) +
-                   ' ' + tgl.toLocaleTimeString('id-ID', { hour:'2-digit', minute:'2-digit' });
-    return `
-      <div class="riwayat-item" onclick="loadRiwayat(${r.id})">
-        <button class="hapus-riwayat" onclick="event.stopPropagation(); hapusRiwayat(${r.id})" title="Hapus">×</button>
-        <div class="judul">📄 ${escapeHtml(r.nomor)}</div>
-        <div class="perihal">${escapeHtml(r.perihal || '-')}</div>
-        <div class="perihal">👤 ${escapeHtml(r.namaTerima || '-')}</div>
-        <div class="tanggal">💾 ${tglStr}</div>
-      </div>
-    `;
-  }).join('');
+  showToast('⏳ Menyimpan...', false, 'info');
+
+  try {
+    // Generate ID unik (nomor + timestamp)
+    const id = Date.now();
+
+    const payload = {
+      action: 'save',
+      id: id,
+      petugas: petugas,
+      data: data
+    };
+
+    // Kirim sebagai text/plain agar tidak kena CORS preflight
+    const res = await fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      body: JSON.stringify(payload),
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' }
+    });
+
+    const result = await res.json();
+
+    if (result.success) {
+      showToast('✅ Surat berhasil disimpan ke riwayat online!');
+      loadRiwayatOnline();
+    } else {
+      showToast('❌ Gagal: ' + (result.message || 'Unknown error'), true);
+    }
+  } catch(err) {
+    showToast('❌ Gagal terhubung ke server. Cek internet.', true);
+    console.error(err);
+  }
+}
+
+// ============================================================
+// 6. LOAD RIWAYAT DARI GOOGLE SHEETS
+// ============================================================
+async function loadRiwayatOnline() {
+  const list = document.getElementById('riwayatList');
+  list.innerHTML = '<div class="riwayat-loading">⏳ Memuat riwayat...</div>';
+
+  if (APPS_SCRIPT_URL.includes('PASTE_URL')) {
+    list.innerHTML = '<div class="riwayat-empty">⚠️ URL Apps Script belum diisi di HTML.<br>Hubungi admin.</div>';
+    return;
+  }
+
+  try {
+    const res = await fetch(APPS_SCRIPT_URL, { method: 'GET' });
+    const result = await res.json();
+
+    if (!result.success) throw new Error(result.message);
+
+    const riwayat = result.data || [];
+    document.getElementById('riwayatCount').textContent = riwayat.length;
+
+    if (riwayat.length === 0) {
+      list.innerHTML = '<div class="riwayat-empty">Belum ada surat tersimpan.<br>Klik <b>💾 Simpan</b> untuk menyimpan.</div>';
+      return;
+    }
+
+    list.innerHTML = riwayat.map(r => {
+      let tglStr = r.savedAt;
+      try {
+        const tgl = new Date(r.savedAt);
+        tglStr = tgl.toLocaleDateString('id-ID', { day:'2-digit', month:'short', year:'numeric' }) +
+                 ' ' + tgl.toLocaleTimeString('id-ID', { hour:'2-digit', minute:'2-digit' });
+      } catch(e) {}
+
+      return `
+        <div class="riwayat-item" onclick="loadRiwayatItem(${r.id})">
+          <button class="hapus-riwayat" onclick="event.stopPropagation(); hapusRiwayatOnline(${r.id})" title="Hapus">×</button>
+          <div class="judul">📄 ${escapeHtml(r.nomor)}</div>
+          <div class="perihal">${escapeHtml(r.perihal || '-')}</div>
+          <div class="perihal">👤 ${escapeHtml(r.namaTerima || '-')}</div>
+          <div class="petugas">✍️ ${escapeHtml(r.petugas || '-')}</div>
+          <div class="tanggal">💾 ${tglStr}</div>
+        </div>
+      `;
+    }).join('');
+
+  } catch(err) {
+    list.innerHTML = '<div class="riwayat-empty">❌ Gagal memuat riwayat.<br>Cek koneksi internet.</div>';
+    console.error(err);
+  }
+}
+
+// ============================================================
+// 7. LOAD ITEM DARI RIWAYAT
+// ============================================================
+async function loadRiwayatItem(id) {
+  if (!confirm('Muat kembali surat ini ke form?\n\nData form saat ini akan tertimpa.')) return;
+
+  try {
+    const res = await fetch(APPS_SCRIPT_URL, { method: 'GET' });
+    const result = await res.json();
+    if (!result.success) throw new Error(result.message);
+
+    const item = (result.data || []).find(r => r.id == id);
+    if (!item) { showToast('❌ Data tidak ditemukan', true); return; }
+
+    // Isi form
+    Object.keys(item.data).forEach(key => {
+      if (key === '__barang') return;
+      const el = document.getElementById(key);
+      if (el) {
+        el.value = item.data[key];
+        el.dispatchEvent(new Event('input'));
+        el.dispatchEvent(new Event('change'));
+      }
+    });
+
+    // Isi tabel barang
+    if (Array.isArray(item.data.__barang) && item.data.__barang.length) {
+      barangData = item.data.__barang;
+    } else {
+      barangData = [{ nama:'', satuan:'', jumlah:'', expire:'' }];
+    }
+    renderBarang();
+
+    showToast(`📂 Surat "${item.nomor}" berhasil dimuat`);
+    window.scrollTo({ top:0, behavior:'smooth' });
+
+  } catch(err) {
+    showToast('❌ Gagal memuat data', true);
+    console.error(err);
+  }
+}
+
+// ============================================================
+// 8. HAPUS RIWAYAT
+// ============================================================
+async function hapusRiwayatOnline(id) {
+  if (!confirm('Hapus surat ini dari riwayat?\n\nData akan dihapus permanen dari Google Sheets.')) return;
+
+  showToast('⏳ Menghapus...', false, 'info');
+
+  try {
+    const res = await fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      body: JSON.stringify({ action: 'delete', id: id }),
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' }
+    });
+
+    const result = await res.json();
+    if (result.success) {
+      showToast('🗑️ Surat dihapus dari riwayat');
+      loadRiwayatOnline();
+    } else {
+      showToast('❌ Gagal hapus: ' + (result.message || ''), true);
+    }
+  } catch(err) {
+    showToast('❌ Gagal terhubung ke server', true);
+    console.error(err);
+  }
+}
+
+// ============================================================
+// 9. TOAST & UTILITIES
+// ============================================================
+let toastTimer;
+function showToast(msg, isError, type) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'show' + (isError ? ' error' : (type === 'info' ? ' info' : ''));
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { t.className = ''; }, 2500);
 }
 
 function escapeHtml(s) {
@@ -702,22 +781,10 @@ function escapeHtml(s) {
 }
 
 // ============================================================
-// 6. TOAST NOTIFIKASI
+// 10. INIT
 // ============================================================
-let toastTimer;
-function showToast(msg, isError) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.className = isError ? 'show error' : 'show';
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => { t.className = ''; }, 2500);
-}
-
-// ============================================================
-// 7. INIT
-// ============================================================
-muat();
-renderRiwayat();
+muatLokal();
+loadRiwayatOnline();
 </script>
 
 </body>
