@@ -97,11 +97,7 @@
   .mengetahui .judul-mengetahui { margin-bottom:2px; }
   .mengetahui .jabatan { font-size:12px; }
   .mengetahui .space { height:60px; }
-  .mengetahui .nama { 
-    font-weight:normal; 
-    text-decoration:none; 
-    font-size:12.5px; 
-  }
+  .mengetahui .nama { font-weight:normal; text-decoration:none; font-size:12.5px; }
   .mengetahui .nip { font-size:11.5px; }
 
   .badge-footer { margin-top:35px; display:flex; align-items:flex-end; gap:10px; }
@@ -140,7 +136,9 @@
       <option value="Menyerahkan BMHP">Menyerahkan BMHP</option>
       <option value="Menyerahkan reagen">Menyerahkan reagen</option>
       <option value="Mengembalikan barang">Mengembalikan barang</option>
-      <option value="Meminjam barang">Meminjam barang</option>
+      <option value="Peminjaman barang">Peminjaman barang</option>
+      <option value="Peminjaman obat">Peminjaman obat</option>
+      <option value="Peminjaman BMHP">Peminjaman BMHP</option>
     </select>
 
     <h3 class="sec">HARI & TANGGAL</h3>
@@ -175,10 +173,8 @@
     <h3 class="sec">DENGAN INI KAMI MENYERAHKAN KEPADA</h3>
     <div class="manual-box">
       <div class="hint">✏️ Isi kolom di bawah ini — akan muncul di dokumen siap cetak.</div>
-      
       <label>Nama Penerima</label>
       <input id="f_nama_terima" placeholder="Contoh: Instalasi Farmasi Puskesmas Rapak Mahang">
-      
       <label>Alamat Penerima</label>
       <input id="f_alamat_terima" placeholder="Contoh: Jl. Pesut, Kelurahan Timbau" style="margin-top:6px;">
     </div>
@@ -273,7 +269,7 @@
 
       <div class="paragraf">Dengan ini kami menyerahkan kepada :</div>
 
-      <!-- DATA PENERIMA — diisi manual dari form -->
+      <!-- DATA PENERIMA -->
       <div class="info">
         <table>
           <tr><td class="l">Nama</td><td class="t">:</td><td id="p_nama_terima"><i style="color:#aaa;">(belum diisi)</i></td></tr>
@@ -297,7 +293,7 @@
       </table>
 
       <div class="paragraf indent">
-        Demikian BUKTI SERAH TERIMA BARANG ini dibuat dalam rangkap 2 (dua) untuk dipergunakan sebagaimana mestinya, atas perhatian dan kerjasamanya diucapkan terima kasih.
+        Demikian BUKTI SERAH TERIMA BARANG ini dibuat dalam rangkap 2 (dua) untuk dipergunakan sebagaimana mestinya, atas perhatian bapak/ibu kami ucapkan terima kasih.
       </div>
 
       <div style="text-align:right; margin-top:15px;" id="p_kota_tgl">Tenggarong, 29 September 2026</div>
@@ -354,7 +350,6 @@ const map = {
 Object.keys(map).forEach(id => {
   const el = document.getElementById(id);
   if (!el) return;
-  // pakai 'input' & 'change' agar dropdown juga ter-trigger
   ['input','change'].forEach(evt => {
     el.addEventListener(evt, () => {
       const target = document.getElementById(map[id]);
