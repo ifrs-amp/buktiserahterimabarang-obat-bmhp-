@@ -2,12 +2,14 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Bukti Serah Terima Barang</title>
 <style>
   * { box-sizing: border-box; font-family: Arial, sans-serif; }
   body { margin:0; background:#f0f2f5; }
 
   .container { display:grid; grid-template-columns:420px 1fr; gap:20px; padding:20px; min-height:100vh; }
+  @media (max-width: 900px) { .container { grid-template-columns:1fr; } .panel { position:static !important; max-height:none !important; } }
 
   .panel { background:#fff; border-radius:8px; padding:20px; box-shadow:0 2px 8px rgba(0,0,0,.08); height:fit-content; position:sticky; top:20px; max-height:calc(100vh - 40px); overflow-y:auto; }
   h2 { margin-top:0; font-size:16px; color:#1a3d6d; border-bottom:2px solid #1a73e8; padding-bottom:8px; }
@@ -50,7 +52,6 @@
   table.barang-form input { border:none; padding:5px; font-size:12px; }
   table.barang-form input:focus { outline:2px solid #1a73e8; }
 
-  /* ===== RIWAYAT ===== */
   .riwayat-section { margin-top:25px; padding-top:15px; border-top:2px dashed #ccc; }
   .riwayat-header { display:flex; justify-content:space-between; align-items:center; gap:8px; }
   .riwayat-header h3 { margin:0; font-size:13px; color:#1a3d6d; }
@@ -78,7 +79,6 @@
   .riwayat-empty { text-align:center; color:#999; font-size:12px; padding:15px; font-style:italic; }
   .riwayat-loading { text-align:center; color:#1a73e8; font-size:12px; padding:15px; }
 
-  /* ====== DOKUMEN ====== */
   .preview-wrap { overflow-x:auto; }
   #dokumen {
     background:#fff; width:210mm; min-height:297mm; margin:0 auto;
@@ -163,7 +163,6 @@
 
 <div class="container">
 
-  <!-- ================= FORM ADMIN ================= -->
   <div class="panel">
     <h2>📝 Form Isi Dokumen</h2>
 
@@ -254,14 +253,12 @@
       RSUD Aji Muhammad Parikesit Tenggarong
     </div>
 
-    <!-- TOMBOL AKSI -->
     <div class="btn-group">
       <button class="btn btn-primary" onclick="window.print()">🖨️ Cetak</button>
       <button class="btn btn-save" onclick="simpanKeRiwayat()">💾 Simpan</button>
       <button class="btn btn-danger" onclick="resetForm()">Reset</button>
     </div>
 
-    <!-- RIWAYAT SURAT -->
     <div class="riwayat-section">
       <div class="riwayat-header">
         <h3>📚 Riwayat Surat (Online)</h3>
@@ -277,11 +274,9 @@
 
   </div>
 
-  <!-- ================= PREVIEW DOKUMEN ================= -->
   <div class="preview-wrap">
     <div id="dokumen">
 
-      <!-- KOP STATIS -->
       <div class="kop">
         <div class="logo">
           <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
@@ -395,9 +390,9 @@
 
 <script>
 // ============================================================
-// ⚙️ KONFIGURASI — GANTI DENGAN URL APPS SCRIPT ANDA
+// ⚙️ URL APPS SCRIPT ANDA (sudah diisi)
 // ============================================================
-const APPS_SCRIPT_URL = 'PASTE_URL_APPS_SCRIPT_DISINI';
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyVFZ5NIHUikuoa-DvL3IYv6PTTp-slo8uKEoAyMxpN3K9o8u4Omsaxp5zdi3r_gEpu6g/exec';
 
 // ============================================================
 // 1. MAPPING FIELD -> PREVIEW
@@ -428,7 +423,6 @@ Object.keys(map).forEach(id => {
   });
 });
 
-// Auto-save nama petugas
 const petugasEl = document.getElementById('f_petugas');
 petugasEl.addEventListener('input', () => {
   localStorage.setItem('petugasNama', petugasEl.value);
@@ -542,7 +536,7 @@ function hapusBaris(i) {
 }
 
 // ============================================================
-// 4. AUTOSAVE LOKAL (draft)
+// 4. AUTOSAVE LOKAL
 // ============================================================
 function simpanLokal() {
   const data = {};
@@ -552,7 +546,6 @@ function simpanLokal() {
 }
 
 function muatLokal() {
-  // Load nama petugas
   const petugas = localStorage.getItem('petugasNama');
   if (petugas) petugasEl.value = petugas;
 
@@ -601,25 +594,12 @@ async function simpanKeRiwayat() {
     return;
   }
 
-  if (APPS_SCRIPT_URL.includes('PASTE_URL')) {
-    showToast('⚠️ URL Apps Script belum diisi!', true);
-    return;
-  }
-
   showToast('⏳ Menyimpan...', false, 'info');
 
   try {
-    // Generate ID unik (nomor + timestamp)
     const id = Date.now();
+    const payload = { action: 'save', id: id, petugas: petugas, data: data };
 
-    const payload = {
-      action: 'save',
-      id: id,
-      petugas: petugas,
-      data: data
-    };
-
-    // Kirim sebagai text/plain agar tidak kena CORS preflight
     const res = await fetch(APPS_SCRIPT_URL, {
       method: 'POST',
       body: JSON.stringify(payload),
@@ -646,11 +626,6 @@ async function simpanKeRiwayat() {
 async function loadRiwayatOnline() {
   const list = document.getElementById('riwayatList');
   list.innerHTML = '<div class="riwayat-loading">⏳ Memuat riwayat...</div>';
-
-  if (APPS_SCRIPT_URL.includes('PASTE_URL')) {
-    list.innerHTML = '<div class="riwayat-empty">⚠️ URL Apps Script belum diisi di HTML.<br>Hubungi admin.</div>';
-    return;
-  }
 
   try {
     const res = await fetch(APPS_SCRIPT_URL, { method: 'GET' });
@@ -706,7 +681,6 @@ async function loadRiwayatItem(id) {
     const item = (result.data || []).find(r => r.id == id);
     if (!item) { showToast('❌ Data tidak ditemukan', true); return; }
 
-    // Isi form
     Object.keys(item.data).forEach(key => {
       if (key === '__barang') return;
       const el = document.getElementById(key);
@@ -717,7 +691,6 @@ async function loadRiwayatItem(id) {
       }
     });
 
-    // Isi tabel barang
     if (Array.isArray(item.data.__barang) && item.data.__barang.length) {
       barangData = item.data.__barang;
     } else {
