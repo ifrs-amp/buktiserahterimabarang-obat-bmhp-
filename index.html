@@ -7,7 +7,7 @@
   * { box-sizing: border-box; font-family: Arial, sans-serif; }
   body { margin:0; background:#f0f2f5; }
 
-  .container { display:grid; grid-template-columns:400px 1fr; gap:20px; padding:20px; min-height:100vh; }
+  .container { display:grid; grid-template-columns:420px 1fr; gap:20px; padding:20px; min-height:100vh; }
 
   .panel { background:#fff; border-radius:8px; padding:20px; box-shadow:0 2px 8px rgba(0,0,0,.08); height:fit-content; position:sticky; top:20px; max-height:calc(100vh - 40px); overflow-y:auto; }
   h2 { margin-top:0; font-size:16px; color:#1a3d6d; border-bottom:2px solid #1a73e8; padding-bottom:8px; }
@@ -24,8 +24,10 @@
   .btn-danger  { background:#e53935; color:#fff; }
   .btn-success { background:#43a047; color:#fff; }
   .btn-success:hover { background:#2e7d32; }
-  .btn-group { margin-top:20px; display:flex; gap:10px; }
-  .btn-group .btn-primary { flex:1; }
+  .btn-save    { background:#f57c00; color:#fff; }
+  .btn-save:hover { background:#e65100; }
+  .btn-group { margin-top:20px; display:flex; gap:10px; flex-wrap:wrap; }
+  .btn-group .btn { flex:1; min-width:110px; }
 
   .row2 { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
 
@@ -45,6 +47,31 @@
   table.barang-form td { border:1px solid #ccc; padding:2px; }
   table.barang-form input { border:none; padding:5px; font-size:12px; }
   table.barang-form input:focus { outline:2px solid #1a73e8; }
+
+  /* ===== RIWAYAT SURAT ===== */
+  .riwayat-section { margin-top:25px; padding-top:15px; border-top:2px dashed #ccc; }
+  .riwayat-header { display:flex; justify-content:space-between; align-items:center; }
+  .riwayat-header h3 { margin:0; font-size:13px; color:#1a3d6d; }
+  .riwayat-count { background:#1a73e8; color:#fff; font-size:11px; padding:2px 8px; border-radius:10px; font-weight:bold; }
+
+  .riwayat-list { margin-top:10px; max-height:280px; overflow-y:auto; }
+  .riwayat-item {
+    background:#f8f9fa; border-left:3px solid #1a73e8; padding:8px 10px;
+    border-radius:5px; margin-bottom:8px; font-size:11.5px;
+    position:relative; cursor:pointer; transition:background 0.15s;
+  }
+  .riwayat-item:hover { background:#e8f0fe; }
+  .riwayat-item .judul { font-weight:bold; color:#0d47a1; margin-bottom:3px; }
+  .riwayat-item .perihal { color:#555; margin-bottom:2px; }
+  .riwayat-item .tanggal { color:#888; font-size:10.5px; }
+  .riwayat-item .hapus-riwayat {
+    position:absolute; top:6px; right:6px;
+    background:#e53935; color:#fff; border:none;
+    width:20px; height:20px; border-radius:50%;
+    font-size:11px; cursor:pointer; line-height:1; padding:0;
+  }
+  .riwayat-item .hapus-riwayat:hover { background:#b71c1c; }
+  .riwayat-empty { text-align:center; color:#999; font-size:12px; padding:15px; font-style:italic; }
 
   /* ====== DOKUMEN ====== */
   .preview-wrap { overflow-x:auto; }
@@ -103,6 +130,19 @@
   .badge-footer { margin-top:35px; display:flex; align-items:flex-end; gap:10px; }
   .badge-footer .b1 { color:#c00; font-weight:bold; font-size:14px; font-style:italic; }
   .badge-footer .b2 { font-size:8px; color:#666; line-height:1.1; }
+
+  /* ===== TOAST NOTIFIKASI ===== */
+  #toast {
+    position:fixed; bottom:30px; right:30px;
+    background:#43a047; color:#fff;
+    padding:12px 20px; border-radius:6px;
+    font-size:13px; font-weight:600;
+    box-shadow:0 4px 12px rgba(0,0,0,.2);
+    opacity:0; transform:translateY(20px);
+    transition:all 0.3s; pointer-events:none; z-index:9999;
+  }
+  #toast.show { opacity:1; transform:translateY(0); }
+  #toast.error { background:#e53935; }
 
   @media print {
     body { background:#fff; }
@@ -210,10 +250,24 @@
       </div>
     </div>
 
+    <!-- ============ TOMBOL AKSI ============ -->
     <div class="btn-group">
       <button class="btn btn-primary" onclick="window.print()">🖨️ Cetak Berkas</button>
+      <button class="btn btn-save" onclick="simpanKeRiwayat()">💾 Simpan</button>
       <button class="btn btn-danger" onclick="resetForm()">Reset</button>
     </div>
+
+    <!-- ============ RIWAYAT SURAT ============ -->
+    <div class="riwayat-section">
+      <div class="riwayat-header">
+        <h3>📚 Riwayat Surat</h3>
+        <span class="riwayat-count" id="riwayatCount">0</span>
+      </div>
+      <div class="riwayat-list" id="riwayatList">
+        <div class="riwayat-empty">Belum ada surat tersimpan.<br>Klik <b>💾 Simpan</b> untuk menyimpan.</div>
+      </div>
+    </div>
+
   </div>
 
   <!-- ================= PREVIEW DOKUMEN ================= -->
@@ -334,6 +388,9 @@
   </div>
 
 </div>
+
+<!-- TOAST -->
+<div id="toast">✅ Berhasil!</div>
 
 <script>
 // ============================================================
@@ -476,7 +533,7 @@ function hapusBaris(i) {
 }
 
 // ============================================================
-// 4. SIMPAN / MUAT / RESET
+// 4. AUTOSAVE FORM (draft saat ini)
 // ============================================================
 function simpan() {
   const data = {};
@@ -501,13 +558,166 @@ function muat() {
 }
 
 function resetForm() {
-  if (confirm('Hapus semua data dan reset ke default?')) {
+  if (confirm('Hapus semua data form dan reset ke default?')) {
     localStorage.removeItem('buktiSerahData');
     location.reload();
   }
 }
 
+// ============================================================
+// 5. RIWAYAT SURAT
+// ============================================================
+const RIWAYAT_KEY = 'buktiSerahRiwayat';
+
+function getRiwayat() {
+  try {
+    return JSON.parse(localStorage.getItem(RIWAYAT_KEY) || '[]');
+  } catch(e) { return []; }
+}
+
+function setRiwayat(arr) {
+  localStorage.setItem(RIWAYAT_KEY, JSON.stringify(arr));
+}
+
+function simpanKeRiwayat() {
+  // Ambil data form sekarang
+  const data = {};
+  document.querySelectorAll('input, textarea, select').forEach(el => { if (el.id) data[el.id] = el.value; });
+  data.__barang = barangData;
+
+  // Validasi minimal
+  if (!data.f_nomor || !data.f_nomor.trim()) {
+    showToast('❌ Nomor surat belum diisi!', true);
+    return;
+  }
+  if (!data.f_nama_terima || !data.f_nama_terima.trim()) {
+    showToast('❌ Nama penerima belum diisi!', true);
+    return;
+  }
+
+  // Buat entry riwayat
+  const entry = {
+    id: Date.now(),
+    savedAt: new Date().toISOString(),
+    nomor: data.f_nomor,
+    perihal: data.f_perihal,
+    namaTerima: data.f_nama_terima,
+    tanggalKota: data.f_kota_tgl,
+    data: data
+  };
+
+  const riwayat = getRiwayat();
+
+  // Cek duplikat nomor surat
+  const idx = riwayat.findIndex(r => r.nomor === entry.nomor);
+  if (idx >= 0) {
+    if (!confirm(`Surat dengan nomor "${entry.nomor}" sudah ada di riwayat.\n\nTimpa dengan data terbaru?`)) {
+      return;
+    }
+    riwayat[idx] = entry;
+  } else {
+    riwayat.unshift(entry); // terbaru di atas
+  }
+
+  setRiwayat(riwayat);
+  renderRiwayat();
+  showToast('✅ Surat berhasil disimpan ke riwayat!');
+}
+
+function loadRiwayat(id) {
+  const riwayat = getRiwayat();
+  const item = riwayat.find(r => r.id === id);
+  if (!item) return;
+
+  if (!confirm(`Muat kembali surat nomor "${item.nomor}"?\n\nData form saat ini akan tertimpa.`)) return;
+
+  // Isi form
+  Object.keys(item.data).forEach(key => {
+    if (key === '__barang') return;
+    const el = document.getElementById(key);
+    if (el) {
+      el.value = item.data[key];
+      el.dispatchEvent(new Event('input'));
+      el.dispatchEvent(new Event('change'));
+    }
+  });
+
+  // Isi tabel barang
+  if (Array.isArray(item.data.__barang) && item.data.__barang.length) {
+    barangData = item.data.__barang;
+  } else {
+    barangData = [{ nama:'', satuan:'', jumlah:'', expire:'' }];
+  }
+  renderBarang();
+
+  showToast(`📂 Surat "${item.nomor}" berhasil dimuat`);
+  window.scrollTo({ top:0, behavior:'smooth' });
+}
+
+function hapusRiwayat(id) {
+  const riwayat = getRiwayat();
+  const item = riwayat.find(r => r.id === id);
+  if (!item) return;
+
+  if (!confirm(`Hapus surat "${item.nomor}" dari riwayat?`)) return;
+
+  const baru = riwayat.filter(r => r.id !== id);
+  setRiwayat(baru);
+  renderRiwayat();
+  showToast('🗑️ Surat dihapus dari riwayat');
+}
+
+function renderRiwayat() {
+  const list = document.getElementById('riwayatList');
+  const count = document.getElementById('riwayatCount');
+  const riwayat = getRiwayat();
+
+  count.textContent = riwayat.length;
+
+  if (riwayat.length === 0) {
+    list.innerHTML = '<div class="riwayat-empty">Belum ada surat tersimpan.<br>Klik <b>💾 Simpan</b> untuk menyimpan.</div>';
+    return;
+  }
+
+  list.innerHTML = riwayat.map(r => {
+    const tgl = new Date(r.savedAt);
+    const tglStr = tgl.toLocaleDateString('id-ID', { day:'2-digit', month:'short', year:'numeric' }) +
+                   ' ' + tgl.toLocaleTimeString('id-ID', { hour:'2-digit', minute:'2-digit' });
+    return `
+      <div class="riwayat-item" onclick="loadRiwayat(${r.id})">
+        <button class="hapus-riwayat" onclick="event.stopPropagation(); hapusRiwayat(${r.id})" title="Hapus">×</button>
+        <div class="judul">📄 ${escapeHtml(r.nomor)}</div>
+        <div class="perihal">${escapeHtml(r.perihal || '-')}</div>
+        <div class="perihal">👤 ${escapeHtml(r.namaTerima || '-')}</div>
+        <div class="tanggal">💾 ${tglStr}</div>
+      </div>
+    `;
+  }).join('');
+}
+
+function escapeHtml(s) {
+  return String(s || '').replace(/[&<>"']/g, m => ({
+    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+  }[m]));
+}
+
+// ============================================================
+// 6. TOAST NOTIFIKASI
+// ============================================================
+let toastTimer;
+function showToast(msg, isError) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = isError ? 'show error' : 'show';
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { t.className = ''; }, 2500);
+}
+
+// ============================================================
+// 7. INIT
+// ============================================================
 muat();
+renderRiwayat();
 </script>
 
 </body>
