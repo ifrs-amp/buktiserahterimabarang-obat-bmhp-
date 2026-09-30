@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Bukti Serah Terima Barang</title>
+<style>
+  * { box-sizing: border-box; font-family: Arial, sans-serif; }
+  body { margin:0; background:#f0f2f5; }
+
+  .container { display:grid; grid-template-columns:400px 1fr; gap:20px; padding:20px; min-height:100vh; }
+
+  .panel { background:#fff; border-radius:8px; padding:20px; box-shadow:0 2px 8px rgba(0,0,0,.08); height:fit-content; position:sticky; top:20px; max-height:calc(100vh - 40px); overflow-y:auto; }
+  h2 { margin-top:0; font-size:16px; color:#1a3d6d; border-bottom:2px solid #1a73e8; padding-bottom:8px; }
+  h3.sec { font-size:13px; color:#1a73e8; margin:15px 0 5px; }
+
+  label { display:block; font-size:12px; margin:8px 0 3px; color:#333; font-weight:600; }
+  input, textarea, select { width:100%; padding:7px 9px; border:1px solid #ccc; border-radius:5px; font-size:13px; }
+  textarea { resize:vertical; min-height:50px; }
+  select { background:#fff; cursor:pointer; }
+
+  .btn { padding:8px 14px; border:none; border-radius:5px; font-size:13px; font-weight:600; cursor:pointer; }
+  .btn-primary { background:#1a73e8; color:#fff; }
+  .btn-primary:hover { background:#1558b0; }
+  .btn-danger  { background:#e53935; color:#fff; }
+  .btn-success { background:#43a047; color:#fff; }
+  .btn-success:hover { background:#2e7d32; }
+  .btn-group { margin-top:20px; display:flex; gap:10px; }
+  .btn-group .btn-primary { flex:1; }
+
+  .row2 { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+
+  input.datepicker { background:#fff8e1; border-color:#ffb300; font-weight:600; }
+
+  .static-info { background:#e8f5e9; border-left:4px solid #43a047; padding:10px 12px; border-radius:5px; font-size:12px; line-height:1.5; margin-top:5px; }
+  .static-info b { color:#2e7d32; }
+
+  .manual-box { background:#fff8e1; border-left:4px solid #ffb300; padding:12px; border-radius:5px; margin-top:8px; }
+  .manual-box .hint { font-size:11px; color:#8d6e00; margin-bottom:8px; font-style:italic; }
+  .manual-box input { background:#ffffff; border:1.5px solid #ffb300; font-weight:600; }
+  .manual-box input:focus { outline:2px solid #1a73e8; border-color:#1a73e8; }
+  .manual-box label { color:#8d6e00; }
+
+  table.barang-form { width:100%; border-collapse:collapse; margin-top:8px; font-size:12px; }
+  table.barang-form th { background:#eef4fd; padding:5px; border:1px solid #ccc; font-size:11px; }
+  table.barang-form td { border:1px solid #ccc; padding:2px; }
+  table.barang-form input { border:none; padding:5px; font-size:12px; }
+  table.barang-form input:focus { outline:2px solid #1a73e8; }
+
+  /* ====== DOKUMEN ====== */
+  .preview-wrap { overflow-x:auto; }
+  #dokumen {
+    background:#fff; width:210mm; min-height:297mm; margin:0 auto;
+    padding:15mm 15mm 12mm; box-shadow:0 2px 12px rgba(0,0,0,.15);
+    font-size:12px; color:#000; font-family:Arial, sans-serif; line-height:1.4;
+  }
+
+  .kop { display:flex; align-items:center; gap:12px; padding-bottom:8px; border-bottom:2.5px solid #000; position:relative; }
+  .kop .logo { width:78px; height:78px; flex-shrink:0; display:flex; align-items:center; justify-content:center; }
+  .kop .logo img { width:100%; height:100%; object-fit:contain; }
+  .kop .logo svg { width:100%; height:100%; }
+  .kop .tengah { flex:1; text-align:center; }
+  .kop .tengah .pemkab { font-size:13px; font-weight:bold; text-transform:uppercase; }
+  .kop .tengah .dinas { font-size:13px; font-weight:bold; text-transform:uppercase; }
+  .kop .tengah .unit { font-size:12px; font-weight:bold; }
+  .kop .tengah .rs { font-size:15px; font-weight:bold; text-transform:uppercase; color:#0d3b7a; letter-spacing:0.5px; }
+  .kop .tengah .alamat { font-size:9.5px; line-height:1.25; margin-top:2px; }
+  .kop::after { content:""; position:absolute; left:0; right:0; bottom:-6px; height:2px; background:#000; }
+
+  .judul-dok { text-align:center; font-weight:bold; font-size:14px; margin:20px 0 4px; text-decoration:underline; letter-spacing:1px; }
+
+  .meta { margin:14px 0; }
+  .meta table { width:100%; }
+  .meta td { vertical-align:top; padding:1.5px 0; }
+  .meta td.l { width:60px; }
+  .meta td.t { width:10px; }
+
+  .paragraf { text-align:justify; margin:10px 0; }
+  .paragraf.indent { text-indent:25px; }
+
+  .info { margin:6px 0 6px 20px; }
+  .info table td { vertical-align:top; padding:1.5px 0; }
+  .info td.l { width:60px; }
+  .info td.t { width:10px; }
+
+  table.tabel-barang { width:100%; border-collapse:collapse; margin:12px 0; font-size:11.5px; }
+  table.tabel-barang th, table.tabel-barang td { border:1px solid #000; padding:5px 6px; vertical-align:top; }
+  table.tabel-barang th { text-align:center; background:#f5f5f5; font-weight:bold; }
+  table.tabel-barang td.c { text-align:center; }
+
+  .ttd-wrap { display:flex; justify-content:space-between; margin-top:20px; }
+  .ttd-box { width:45%; text-align:center; }
+  .ttd-box .space { height:55px; }
+  .ttd-box .garis { min-height:16px; margin-bottom:2px; }
+  .ttd-box .nip { font-size:11px; }
+
+  .mengetahui { margin-top:35px; text-align:center; }
+  .mengetahui .judul-mengetahui { margin-bottom:2px; }
+  .mengetahui .jabatan { font-size:12px; }
+  .mengetahui .space { height:60px; }
+  .mengetahui .nama { 
+    font-weight:normal; 
+    text-decoration:none; 
+    font-size:12.5px; 
+  }
+  .mengetahui .nip { font-size:11.5px; }
+
+  .badge-footer { margin-top:35px; display:flex; align-items:flex-end; gap:10px; }
+  .badge-footer .b1 { color:#c00; font-weight:bold; font-size:14px; font-style:italic; }
+  .badge-footer .b2 { font-size:8px; color:#666; line-height:1.1; }
+
+  @media print {
+    body { background:#fff; }
+    .container { display:block; padding:0; }
+    .panel { display:none !important; }
+    #dokumen { box-shadow:none; margin:0; padding:0; width:auto; min-height:auto; }
+    @page { size:A4; margin:12mm 15mm; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- ================= FORM ADMIN ================= -->
+  <div class="panel">
+    <h2>📝 Form Isi Dokumen</h2>
+
+    <h3 class="sec">DOKUMEN</h3>
+    <label>Nomor</label>
+    <input id="f_nomor" value="B-258/RSAMP/FAR/400.7.20/9/2026">
+    <label>Perihal</label>
+    <select id="f_perihal">
+      <option value="Pengembalian obat">Pengembalian obat</option>
+      <option value="Pengembalian alkes">Pengembalian alkes</option>
+      <option value="Pengembalian reagen">Pengembalian reagen</option>
+      <option value="Pengembalian BMHP">Pengembalian BMHP</option>
+      <option value="Menyerahkan barang">Menyerahkan barang</option>
+      <option value="Menyerahkan obat" selected>Menyerahkan obat</option>
+      <option value="Menyerahkan alkes">Menyerahkan alkes</option>
+      <option value="Menyerahkan BMHP">Menyerahkan BMHP</option>
+      <option value="Menyerahkan reagen">Menyerahkan reagen</option>
+      <option value="Mengembalikan barang">Mengembalikan barang</option>
+      <option value="Meminjam barang">Meminjam barang</option>
+    </select>
+
+    <h3 class="sec">HARI & TANGGAL</h3>
+    <label>📅 Pilih Tanggal (auto-isi otomatis)</label>
+    <input type="date" id="f_datepicker" class="datepicker">
+
+    <label>Hari</label>
+    <input id="f_hari" value="Selasa" placeholder="Selasa">
+    <div class="row2">
+      <div>
+        <label>Tanggal (terbilang)</label>
+        <input id="f_tgl_angka" value="Dua Puluh Sembilan" placeholder="Dua Puluh Sembilan">
+      </div>
+      <div>
+        <label>Bulan</label>
+        <input id="f_bulan" value="September" placeholder="September">
+      </div>
+    </div>
+    <label>Tahun (terbilang)</label>
+    <input id="f_tahun_terbilang" value="Dua Ribu Dua Puluh Enam" placeholder="Dua Ribu Dua Puluh Enam">
+
+    <h3 class="sec">PENYERAH (STATIS)</h3>
+    <div class="static-info">
+      <b>Nama:</b> Helen Tapilouw, S.Si., Apt<br>
+      <b>NIP:</b> 197507202005022003<br>
+      <b>Jabatan:</b> Kepala Instalasi Farmasi RSUD Aji Muhammad Parikesit Tenggarong
+      <div style="margin-top:6px; font-size:11px; color:#555;">
+        ⚙️ Data ini otomatis muncul di paragraf dokumen.
+      </div>
+    </div>
+
+    <h3 class="sec">DENGAN INI KAMI MENYERAHKAN KEPADA</h3>
+    <div class="manual-box">
+      <div class="hint">✏️ Isi kolom di bawah ini — akan muncul di dokumen siap cetak.</div>
+      
+      <label>Nama Penerima</label>
+      <input id="f_nama_terima" placeholder="Contoh: Instalasi Farmasi Puskesmas Rapak Mahang">
+      
+      <label>Alamat Penerima</label>
+      <input id="f_alamat_terima" placeholder="Contoh: Jl. Pesut, Kelurahan Timbau" style="margin-top:6px;">
+    </div>
+
+    <h3 class="sec">DAFTAR BARANG</h3>
+    <table class="barang-form">
+      <thead>
+        <tr>
+          <th style="width:25px">No</th>
+          <th>Nama Barang</th>
+          <th style="width:60px">Satuan</th>
+          <th style="width:50px">Jml</th>
+          <th style="width:75px">Expire</th>
+          <th style="width:25px"></th>
+        </tr>
+      </thead>
+      <tbody id="tbody_barang"></tbody>
+    </table>
+    <button type="button" class="btn btn-success" style="margin-top:8px; width:100%" onclick="tambahBaris()">+ Tambah Baris</button>
+
+    <h3 class="sec">PENUTUP</h3>
+    <label>Kota & Tanggal</label>
+    <input id="f_kota_tgl" value="Tenggarong, 29 September 2026">
+
+    <h3 class="sec">MENGETAHUI (STATIS)</h3>
+    <div class="static-info">
+      <b>Nama:</b> Helen Tapilouw, S.Si., Apt<br>
+      <b>NIP:</b> 197507202005022003<br>
+      <b>Jabatan:</b> Kepala Instalasi Farmasi<br>
+      RSUD Aji Muhammad Parikesit Tenggarong
+      <div style="margin-top:6px; font-size:11px; color:#555;">
+        ⚙️ Data ini otomatis muncul di bagian "Mengetahui".
+      </div>
+    </div>
+
+    <div class="btn-group">
+      <button class="btn btn-primary" onclick="window.print()">🖨️ Cetak Berkas</button>
+      <button class="btn btn-danger" onclick="resetForm()">Reset</button>
+    </div>
+  </div>
+
+  <!-- ================= PREVIEW DOKUMEN ================= -->
+  <div class="preview-wrap">
+    <div id="dokumen">
+
+      <!-- KOP STATIS -->
+      <div class="kop">
+        <div class="logo">
+          <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="50" cy="50" r="46" fill="#1a7a3a" stroke="#0d3b1a" stroke-width="2"/>
+            <circle cx="50" cy="50" r="38" fill="none" stroke="#fff" stroke-width="1.5"/>
+            <path d="M50 15 L58 40 L85 40 L63 55 L72 82 L50 66 L28 82 L37 55 L15 40 L42 40 Z" fill="#fff"/>
+            <text x="50" y="58" text-anchor="middle" font-size="12" font-weight="bold" fill="#1a7a3a">KK</text>
+          </svg>
+        </div>
+        <div class="tengah">
+          <div class="pemkab">PEMERINTAH KABUPATEN KUTAI KARTANEGARA</div>
+          <div class="dinas">DINAS KESEHATAN</div>
+          <div class="unit">UNIT ORGANISASI BERSIFAT KHUSUS</div>
+          <div class="rs">RUMAH SAKIT UMUM DAERAH AJI MUHAMMAD PARIKESIT</div>
+          <div class="alamat">
+            Jl. Cut Nyak Dhien No. 1 Tenggarong 75513 Telp. (0541) 661515 Fax. (0541) 662342<br>
+            Website : www.rsudamp.kukarkab.go.id &nbsp; Email : rsud_amp@yahoo.co.id
+          </div>
+        </div>
+        <div class="logo">
+          <img src="logo-kanan.png" alt="Logo RSUD AMP">
+        </div>
+      </div>
+
+      <div class="judul-dok">BUKTI SERAH TERIMA BARANG</div>
+
+      <div class="meta">
+        <table>
+          <tr><td class="l">Nomor</td><td class="t">:</td><td id="p_nomor">-</td></tr>
+          <tr><td class="l">Perihal</td><td class="t">:</td><td id="p_perihal">-</td></tr>
+        </table>
+      </div>
+
+      <div class="paragraf indent">
+        Pada hari ini <b id="p_hari">-</b> tanggal <b id="p_tgl_angka">-</b> bulan <b id="p_bulan">-</b> tahun <b id="p_tahun_terbilang">-</b> kami yang bertanda tangan dibawah ini:
+      </div>
+
+      <!-- DATA PENYERAH (STATIS) -->
+      <div class="info">
+        <table>
+          <tr><td class="l">Nama</td><td class="t">:</td><td>Helen Tapilouw, S.Si., Apt</td></tr>
+          <tr><td class="l">NIP</td><td class="t">:</td><td>197507202005022003</td></tr>
+          <tr><td class="l">Jabatan</td><td class="t">:</td><td>Kepala Instalasi Farmasi RSUD Aji Muhammad Parikesit Tenggarong</td></tr>
+        </table>
+      </div>
+
+      <div class="paragraf">Dengan ini kami menyerahkan kepada :</div>
+
+      <!-- DATA PENERIMA — diisi manual dari form -->
+      <div class="info">
+        <table>
+          <tr><td class="l">Nama</td><td class="t">:</td><td id="p_nama_terima"><i style="color:#aaa;">(belum diisi)</i></td></tr>
+          <tr><td class="l">Alamat</td><td class="t">:</td><td id="p_alamat_terima"><i style="color:#aaa;">(belum diisi)</i></td></tr>
+        </table>
+      </div>
+
+      <div class="paragraf">Daftar barang yang diserahkan :</div>
+
+      <table class="tabel-barang">
+        <thead>
+          <tr>
+            <th style="width:35px">No</th>
+            <th>Nama Barang</th>
+            <th style="width:70px">Satuan</th>
+            <th style="width:55px">Jumlah</th>
+            <th style="width:90px">Expire date</th>
+          </tr>
+        </thead>
+        <tbody id="p_tbody_barang"></tbody>
+      </table>
+
+      <div class="paragraf indent">
+        Demikian BUKTI SERAH TERIMA BARANG ini dibuat dalam rangkap 2 (dua) untuk dipergunakan sebagaimana mestinya, atas perhatian dan kerjasamanya diucapkan terima kasih.
+      </div>
+
+      <div style="text-align:right; margin-top:15px;" id="p_kota_tgl">Tenggarong, 29 September 2026</div>
+
+      <!-- TTD MENYERAHKAN & MENERIMA -->
+      <div class="ttd-wrap">
+        <div class="ttd-box">
+          <div>Yang Menyerahkan</div>
+          <div class="space"></div>
+          <div class="garis">..................................................</div>
+          <div class="nip">NIP. ...............................</div>
+        </div>
+        <div class="ttd-box">
+          <div>Yang Menerima</div>
+          <div class="space"></div>
+          <div class="garis">..................................................</div>
+          <div class="nip">NIP. ...............................</div>
+        </div>
+      </div>
+
+      <!-- MENGETAHUI (STATIS) -->
+      <div class="mengetahui">
+        <div class="judul-mengetahui">Mengetahui,</div>
+        <div class="jabatan">Kepala Instalasi Farmasi</div>
+        <div class="jabatan">RSUD Aji Muhammad Parikesit Tenggarong</div>
+        <div class="space"></div>
+        <div class="nama">Helen Tapilouw, S.Si., Apt</div>
+        <div class="nip">NIP. 197507202005022003</div>
+      </div>
+
+      <!-- BADGE FOOTER -->
+      <div class="badge-footer">
+        <div class="b1">BerkAHKLAh</div>
+        <div class="b2">bangga<br>melayani<br>bangsa</div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ============================================================
+// 1. MAPPING FIELD -> ELEMEN PREVIEW
+// ============================================================
+const map = {
+  f_nomor:'p_nomor', f_perihal:'p_perihal',
+  f_hari:'p_hari', f_tgl_angka:'p_tgl_angka',
+  f_bulan:'p_bulan', f_tahun_terbilang:'p_tahun_terbilang',
+  f_nama_terima:'p_nama_terima', f_alamat_terima:'p_alamat_terima',
+  f_kota_tgl:'p_kota_tgl'
+};
+
+Object.keys(map).forEach(id => {
+  const el = document.getElementById(id);
+  if (!el) return;
+  // pakai 'input' & 'change' agar dropdown juga ter-trigger
+  ['input','change'].forEach(evt => {
+    el.addEventListener(evt, () => {
+      const target = document.getElementById(map[id]);
+      const val = (el.value || '').trim();
+      if (id === 'f_nama_terima' || id === 'f_alamat_terima') {
+        if (val) {
+          target.textContent = val;
+        } else {
+          target.innerHTML = '<i style="color:#aaa;">(belum diisi)</i>';
+        }
+      } else {
+        target.textContent = val || '-';
+      }
+      simpan();
+    });
+  });
+});
+
+// ============================================================
+// 2. AUTO-CONVERT DATE PICKER
+// ============================================================
+const HARI_ID  = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
+const BULAN_ID = ['Januari','Februari','Maret','April','Mei','Juni',
+                  'Juli','Agustus','September','Oktober','November','Desember'];
+
+function terbilang(n) {
+  const satuan = ['','Satu','Dua','Tiga','Empat','Lima','Enam','Tujuh','Delapan','Sembilan',
+                  'Sepuluh','Sebelas'];
+  n = parseInt(n);
+  if (n < 12) return satuan[n];
+  if (n < 20) return terbilang(n-10) + ' Belas';
+  if (n < 100) return terbilang(Math.floor(n/10)) + ' Puluh' + (n%10 ? ' ' + terbilang(n%10) : '');
+  if (n < 200) return 'Seratus' + (n%100 ? ' ' + terbilang(n%100) : '');
+  if (n < 1000) return terbilang(Math.floor(n/100)) + ' Ratus' + (n%100 ? ' ' + terbilang(n%100) : '');
+  if (n < 2000) return 'Seribu' + (n%1000 ? ' ' + terbilang(n%1000) : '');
+  if (n < 1000000) return terbilang(Math.floor(n/1000)) + ' Ribu' + (n%1000 ? ' ' + terbilang(n%1000) : '');
+  if (n < 1000000000) return terbilang(Math.floor(n/1000000)) + ' Juta' + (n%1000000 ? ' ' + terbilang(n%1000000) : '');
+  return terbilang(Math.floor(n/1000000000)) + ' Miliar' + (n%1000000000 ? ' ' + terbilang(n%1000000000) : '');
+}
+
+document.getElementById('f_datepicker').addEventListener('change', e => {
+  if (!e.target.value) return;
+  const d = new Date(e.target.value);
+  const hari     = HARI_ID[d.getDay()];
+  const tglAngka = terbilang(d.getDate());
+  const bulan    = BULAN_ID[d.getMonth()];
+  const tahun    = terbilang(d.getFullYear());
+
+  [['f_hari', hari], ['f_tgl_angka', tglAngka], ['f_bulan', bulan], ['f_tahun_terbilang', tahun]]
+    .forEach(([id, val]) => {
+      const el = document.getElementById(id);
+      el.value = val;
+      el.dispatchEvent(new Event('input'));
+    });
+
+  const kotaEl = document.getElementById('f_kota_tgl');
+  const kota = (kotaEl.value.split(',')[0] || 'Tenggarong').trim();
+  kotaEl.value = `${kota}, ${d.getDate()} ${BULAN_ID[d.getMonth()]} ${d.getFullYear()}`;
+  kotaEl.dispatchEvent(new Event('input'));
+});
+
+// ============================================================
+// 3. TABEL BARANG DINAMIS
+// ============================================================
+let barangData = [
+  { nama:'Lincozid 500 mg/100 ml', satuan:'botol', jumlah:'100', expire:'' }
+];
+
+function renderBarang() {
+  const tbody = document.getElementById('tbody_barang');
+  const pbody = document.getElementById('p_tbody_barang');
+  tbody.innerHTML = '';
+  pbody.innerHTML = '';
+
+  barangData.forEach((b, i) => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td class="c">${i+1}</td>
+      <td><input value="${b.nama||''}" data-i="${i}" data-k="nama"></td>
+      <td><input value="${b.satuan||''}" data-i="${i}" data-k="satuan"></td>
+      <td><input value="${b.jumlah||''}" data-i="${i}" data-k="jumlah"></td>
+      <td><input value="${b.expire||''}" data-i="${i}" data-k="expire"></td>
+      <td><button type="button" class="btn btn-danger" style="padding:3px 6px; font-size:11px;" onclick="hapusBaris(${i})">×</button></td>
+    `;
+    tbody.appendChild(tr);
+
+    const ptr = document.createElement('tr');
+    ptr.innerHTML = `
+      <td class="c">${i+1}</td>
+      <td>${b.nama||''}</td>
+      <td class="c">${b.satuan||''}</td>
+      <td class="c">${b.jumlah||''}</td>
+      <td class="c">${b.expire||'-'}</td>
+    `;
+    pbody.appendChild(ptr);
+  });
+
+  tbody.querySelectorAll('input').forEach(inp => {
+    inp.addEventListener('input', e => {
+      const i = +e.target.dataset.i;
+      const k = e.target.dataset.k;
+      barangData[i][k] = e.target.value;
+      const cellMap = { nama:1, satuan:2, jumlah:3, expire:4 };
+      const previewRow = pbody.children[i];
+      if (previewRow) {
+        previewRow.children[cellMap[k]].textContent = e.target.value || (k==='expire'?'-':'');
+      }
+      simpan();
+    });
+  });
+}
+
+function tambahBaris() {
+  barangData.push({ nama:'', satuan:'', jumlah:'', expire:'' });
+  renderBarang();
+  simpan();
+}
+
+function hapusBaris(i) {
+  if (barangData.length === 1) { alert('Minimal 1 baris'); return; }
+  barangData.splice(i, 1);
+  renderBarang();
+  simpan();
+}
+
+// ============================================================
+// 4. SIMPAN / MUAT / RESET
+// ============================================================
+function simpan() {
+  const data = {};
+  document.querySelectorAll('input, textarea, select').forEach(el => { if (el.id) data[el.id] = el.value; });
+  data.__barang = barangData;
+  localStorage.setItem('buktiSerahData', JSON.stringify(data));
+}
+
+function muat() {
+  const raw = localStorage.getItem('buktiSerahData');
+  if (!raw) { renderBarang(); return; }
+  try {
+    const data = JSON.parse(raw);
+    Object.keys(data).forEach(id => {
+      if (id === '__barang') return;
+      const el = document.getElementById(id);
+      if (el) { el.value = data[id]; el.dispatchEvent(new Event('input')); el.dispatchEvent(new Event('change')); }
+    });
+    if (Array.isArray(data.__barang) && data.__barang.length) barangData = data.__barang;
+  } catch(e) {}
+  renderBarang();
+}
+
+function resetForm() {
+  if (confirm('Hapus semua data dan reset ke default?')) {
+    localStorage.removeItem('buktiSerahData');
+    location.reload();
+  }
+}
+
+muat();
+</script>
+
+</body>
+</html>
