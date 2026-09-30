@@ -12,8 +12,8 @@
   @media (max-width: 900px) { .container { grid-template-columns:1fr; } .panel { position:static !important; max-height:none !important; } }
 
   .panel { background:#fff; border-radius:8px; padding:20px; box-shadow:0 2px 8px rgba(0,0,0,.08); height:fit-content; position:sticky; top:20px; max-height:calc(100vh - 40px); overflow-y:auto; }
-  h2 { margin-top:0; font-size:16px; color:#1a3d6d; border-bottom:2px solid #1a73e8; padding-bottom:8px; }
-  h3.sec { font-size:13px; color:#1a73e8; margin:15px 0 5px; }
+  h2 { margin-top:0; font-size:16px; color:#1a3d6d; border-bottom:2px solid #4F81BD; padding-bottom:8px; }
+  h3.sec { font-size:13px; color:#4F81BD; margin:15px 0 5px; }
 
   label { display:block; font-size:12px; margin:8px 0 3px; color:#333; font-weight:600; }
   input, textarea, select { width:100%; padding:7px 9px; border:1px solid #ccc; border-radius:5px; font-size:13px; }
@@ -21,8 +21,8 @@
   select { background:#fff; cursor:pointer; }
 
   .btn { padding:8px 14px; border:none; border-radius:5px; font-size:13px; font-weight:600; cursor:pointer; }
-  .btn-primary { background:#1a73e8; color:#fff; }
-  .btn-primary:hover { background:#1558b0; }
+  .btn-primary { background:#4F81BD; color:#fff; }
+  .btn-primary:hover { background:#3d6a9e; }
   .btn-danger  { background:#e53935; color:#fff; }
   .btn-success { background:#43a047; color:#fff; }
   .btn-success:hover { background:#2e7d32; }
@@ -86,8 +86,11 @@
     font-size:12px; color:#000; font-family:Arial, sans-serif; line-height:1.4;
   }
 
-  /* ===== KOP tanpa logo — semua teks HITAM, kontak warna #4F81BD ===== */
-  .kop { padding-bottom:8px; border-bottom:2.5px solid #000; position:relative; text-align:center; color:#000; }
+  /* ===== KOP dengan LOGO KIRI + KANAN ===== */
+  .kop { display:flex; align-items:center; gap:14px; padding-bottom:8px; border-bottom:2.5px solid #000; position:relative; text-align:center; color:#000; }
+  .kop .logo-kiri, .kop .logo-kanan { width:80px; height:80px; flex-shrink:0; display:flex; align-items:center; justify-content:center; }
+  .kop .logo-kiri img, .kop .logo-kanan img { width:100%; height:100%; object-fit:contain; }
+  .kop .tengah { flex:1; text-align:center; }
   .kop .pemkab { font-size:14px; font-weight:normal; text-transform:uppercase; letter-spacing:0.3px; color:#000; }
   .kop .dinas { font-size:15px; font-weight:bold; text-transform:uppercase; margin-top:1px; color:#000; }
   .kop .unit { font-size:13px; font-weight:bold; text-transform:uppercase; margin-top:1px; color:#000; }
@@ -130,9 +133,9 @@
   .mengetahui .nama { font-weight:normal; text-decoration:none; font-size:12.5px; }
   .mengetahui .nip { font-size:11.5px; }
 
-  .badge-footer { margin-top:35px; display:flex; align-items:flex-end; gap:10px; }
-  .badge-footer .b1 { color:#c00; font-weight:bold; font-size:14px; font-style:italic; }
-  .badge-footer .b2 { font-size:8px; color:#666; line-height:1.1; }
+  /* ===== FOOTER LOGO BerAKHLAK ===== */
+  .footer-logo { margin-top:30px; display:flex; align-items:flex-end; justify-content:flex-start; }
+  .footer-logo img { height:60px; width:auto; object-fit:contain; }
 
   #toast {
     position:fixed; bottom:30px; right:30px;
@@ -155,6 +158,9 @@
     #dokumen { box-shadow:none; margin:0; padding:0; width:auto; min-height:auto; }
     @page { size:A4; margin:12mm 15mm; }
     .kop .alamat .kontak { color:#4F81BD !important; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+    .kop .logo-kiri img, .kop .logo-kanan img, .footer-logo img {
+      -webkit-print-color-adjust:exact; print-color-adjust:exact;
+    }
   }
 </style>
 </head>
@@ -276,15 +282,28 @@
   <div class="preview-wrap">
     <div id="dokumen">
 
-      <!-- ===== KOP SURAT — kontak warna #4F81BD ===== -->
+      <!-- ===== KOP DENGAN LOGO ===== -->
       <div class="kop">
-        <div class="pemkab">PEMERINTAH KABUPATEN KUTAI KARTANEGARA</div>
-        <div class="dinas">DINAS KESEHATAN</div>
-        <div class="unit">UNIT ORGANISASI BERSIFAT KHUSUS</div>
-        <div class="rs">RUMAH SAKIT UMUM DAERAH AJI MUHAMMAD PARIKESIT</div>
-        <div class="alamat">
-          Jl. Cut Nyak Dhien No. 1 Tenggarong 75513 Telp. (0541) 661515 Fax. (0541) 662342<br>
-          <span class="kontak">www.rsamp.kukarkab.go.id</span> &nbsp;·&nbsp; <span class="kontak">rsudamparikesit@yahoo.com</span>
+        <!-- Logo KIRI: RSUD -->
+        <div class="logo-kiri">
+          <img src="logo-rsud.png" alt="Logo RSUD AMP">
+        </div>
+
+        <!-- Teks Tengah -->
+        <div class="tengah">
+          <div class="pemkab">PEMERINTAH KABUPATEN KUTAI KARTANEGARA</div>
+          <div class="dinas">DINAS KESEHATAN</div>
+          <div class="unit">UNIT ORGANISASI BERSIFAT KHUSUS</div>
+          <div class="rs">RUMAH SAKIT UMUM DAERAH AJI MUHAMMAD PARIKESIT</div>
+          <div class="alamat">
+            Jl. Cut Nyak Dhien No. 1 Tenggarong 75513 Telp. (0541) 661515 Fax. (0541) 662342<br>
+            <span class="kontak">www.rsamp.kukarkab.go.id</span> &nbsp;·&nbsp; <span class="kontak">rsudamparikesit@yahoo.com</span>
+          </div>
+        </div>
+
+        <!-- Logo KANAN: Kabupaten -->
+        <div class="logo-kanan">
+          <img src="logo-kabupaten.png" alt="Logo Kabupaten Kutai Kartanegara">
         </div>
       </div>
 
@@ -363,9 +382,9 @@
         <div class="nip">NIP. 197507202005022003</div>
       </div>
 
-      <div class="badge-footer">
-        <div class="b1">BerkAHKLAh</div>
-        <div class="b2">bangga<br>melayani<br>bangsa</div>
+      <!-- ===== FOOTER LOGO BerAKHLAK ===== -->
+      <div class="footer-logo">
+        <img src="logo-berakhlak.png" alt="BerAKHLAK - Bangga Melayani Bangsa">
       </div>
 
     </div>
