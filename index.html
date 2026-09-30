@@ -43,29 +43,29 @@
   .manual-box { background:#fff8e1; border-left:4px solid #ffb300; padding:12px; border-radius:5px; margin-top:8px; }
   .manual-box .hint { font-size:11px; color:#8d6e00; margin-bottom:8px; font-style:italic; }
   .manual-box input { background:#ffffff; border:1.5px solid #ffb300; font-weight:600; }
-  .manual-box input:focus { outline:2px solid #1a73e8; border-color:#1a73e8; }
+  .manual-box input:focus { outline:2px solid #4F81BD; border-color:#4F81BD; }
   .manual-box label { color:#8d6e00; }
 
   table.barang-form { width:100%; border-collapse:collapse; margin-top:8px; font-size:12px; }
   table.barang-form th { background:#eef4fd; padding:5px; border:1px solid #ccc; font-size:11px; }
   table.barang-form td { border:1px solid #ccc; padding:2px; }
   table.barang-form input { border:none; padding:5px; font-size:12px; }
-  table.barang-form input:focus { outline:2px solid #1a73e8; }
+  table.barang-form input:focus { outline:2px solid #4F81BD; }
 
   .riwayat-section { margin-top:25px; padding-top:15px; border-top:2px dashed #ccc; }
   .riwayat-header { display:flex; justify-content:space-between; align-items:center; gap:8px; }
   .riwayat-header h3 { margin:0; font-size:13px; color:#1a3d6d; }
   .riwayat-header > div { display:flex; gap:6px; align-items:center; }
-  .riwayat-count { background:#1a73e8; color:#fff; font-size:11px; padding:2px 8px; border-radius:10px; font-weight:bold; }
+  .riwayat-count { background:#4F81BD; color:#fff; font-size:11px; padding:2px 8px; border-radius:10px; font-weight:bold; }
 
   .riwayat-list { margin-top:10px; max-height:320px; overflow-y:auto; }
   .riwayat-item {
-    background:#f8f9fa; border-left:3px solid #1a73e8; padding:8px 10px;
+    background:#f8f9fa; border-left:3px solid #4F81BD; padding:8px 10px;
     border-radius:5px; margin-bottom:8px; font-size:11.5px;
     position:relative; cursor:pointer; transition:background 0.15s;
   }
   .riwayat-item:hover { background:#e8f0fe; }
-  .riwayat-item .judul { font-weight:bold; color:#0d47a1; margin-bottom:3px; padding-right:22px; }
+  .riwayat-item .judul { font-weight:bold; color:#4F81BD; margin-bottom:3px; padding-right:22px; }
   .riwayat-item .perihal { color:#555; margin-bottom:2px; }
   .riwayat-item .tanggal { color:#888; font-size:10.5px; }
   .riwayat-item .petugas { color:#f57c00; font-size:10.5px; font-weight:bold; }
@@ -77,7 +77,7 @@
   }
   .riwayat-item .hapus-riwayat:hover { background:#b71c1c; }
   .riwayat-empty { text-align:center; color:#999; font-size:12px; padding:15px; font-style:italic; }
-  .riwayat-loading { text-align:center; color:#1a73e8; font-size:12px; padding:15px; }
+  .riwayat-loading { text-align:center; color:#4F81BD; font-size:12px; padding:15px; }
 
   .preview-wrap { overflow-x:auto; }
   #dokumen {
@@ -86,16 +86,14 @@
     font-size:12px; color:#000; font-family:Arial, sans-serif; line-height:1.4;
   }
 
-  .kop { display:flex; align-items:center; gap:12px; padding-bottom:8px; border-bottom:2.5px solid #000; position:relative; }
-  .kop .logo { width:78px; height:78px; flex-shrink:0; display:flex; align-items:center; justify-content:center; }
-  .kop .logo img { width:100%; height:100%; object-fit:contain; }
-  .kop .logo svg { width:100%; height:100%; }
-  .kop .tengah { flex:1; text-align:center; }
-  .kop .tengah .pemkab { font-size:13px; font-weight:bold; text-transform:uppercase; }
-  .kop .tengah .dinas { font-size:13px; font-weight:bold; text-transform:uppercase; }
-  .kop .tengah .unit { font-size:12px; font-weight:bold; }
-  .kop .tengah .rs { font-size:15px; font-weight:bold; text-transform:uppercase; color:#0d3b7a; letter-spacing:0.5px; }
-  .kop .tengah .alamat { font-size:9.5px; line-height:1.25; margin-top:2px; }
+  /* ===== KOP tanpa logo — semua teks HITAM, kontak warna #4F81BD ===== */
+  .kop { padding-bottom:8px; border-bottom:2.5px solid #000; position:relative; text-align:center; color:#000; }
+  .kop .pemkab { font-size:14px; font-weight:normal; text-transform:uppercase; letter-spacing:0.3px; color:#000; }
+  .kop .dinas { font-size:15px; font-weight:bold; text-transform:uppercase; margin-top:1px; color:#000; }
+  .kop .unit { font-size:13px; font-weight:bold; text-transform:uppercase; margin-top:1px; color:#000; }
+  .kop .rs { font-size:16px; font-weight:bold; text-transform:uppercase; color:#000; letter-spacing:0.5px; margin-top:2px; }
+  .kop .alamat { font-size:9.5px; line-height:1.35; margin-top:4px; color:#000; }
+  .kop .alamat .kontak { color:#4F81BD; font-weight:bold; }
   .kop::after { content:""; position:absolute; left:0; right:0; bottom:-6px; height:2px; background:#000; }
 
   .judul-dok { text-align:center; font-weight:bold; font-size:14px; margin:20px 0 4px; text-decoration:underline; letter-spacing:1px; }
@@ -148,7 +146,7 @@
   }
   #toast.show { opacity:1; transform:translateY(0); }
   #toast.error { background:#e53935; }
-  #toast.info { background:#1a73e8; }
+  #toast.info { background:#4F81BD; }
 
   @media print {
     body { background:#fff; }
@@ -156,6 +154,7 @@
     .panel { display:none !important; }
     #dokumen { box-shadow:none; margin:0; padding:0; width:auto; min-height:auto; }
     @page { size:A4; margin:12mm 15mm; }
+    .kop .alamat .kontak { color:#4F81BD !important; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
   }
 </style>
 </head>
@@ -277,27 +276,15 @@
   <div class="preview-wrap">
     <div id="dokumen">
 
+      <!-- ===== KOP SURAT — kontak warna #4F81BD ===== -->
       <div class="kop">
-        <div class="logo">
-          <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="50" cy="50" r="46" fill="#1a7a3a" stroke="#0d3b1a" stroke-width="2"/>
-            <circle cx="50" cy="50" r="38" fill="none" stroke="#fff" stroke-width="1.5"/>
-            <path d="M50 15 L58 40 L85 40 L63 55 L72 82 L50 66 L28 82 L37 55 L15 40 L42 40 Z" fill="#fff"/>
-            <text x="50" y="58" text-anchor="middle" font-size="12" font-weight="bold" fill="#1a7a3a">KK</text>
-          </svg>
-        </div>
-        <div class="tengah">
-          <div class="pemkab">PEMERINTAH KABUPATEN KUTAI KARTANEGARA</div>
-          <div class="dinas">DINAS KESEHATAN</div>
-          <div class="unit">UNIT ORGANISASI BERSIFAT KHUSUS</div>
-          <div class="rs">RUMAH SAKIT UMUM DAERAH AJI MUHAMMAD PARIKESIT</div>
-          <div class="alamat">
-            Jl. Cut Nyak Dhien No. 1 Tenggarong 75513 Telp. (0541) 661515 Fax. (0541) 662342<br>
-            Website : www.rsudamp.kukarkab.go.id &nbsp; Email : rsud_amp@yahoo.co.id
-          </div>
-        </div>
-        <div class="logo">
-          <img src="logo-kanan.png" alt="Logo RSUD AMP">
+        <div class="pemkab">PEMERINTAH KABUPATEN KUTAI KARTANEGARA</div>
+        <div class="dinas">DINAS KESEHATAN</div>
+        <div class="unit">UNIT ORGANISASI BERSIFAT KHUSUS</div>
+        <div class="rs">RUMAH SAKIT UMUM DAERAH AJI MUHAMMAD PARIKESIT</div>
+        <div class="alamat">
+          Jl. Cut Nyak Dhien No. 1 Tenggarong 75513 Telp. (0541) 661515 Fax. (0541) 662342<br>
+          <span class="kontak">www.rsamp.kukarkab.go.id</span> &nbsp;·&nbsp; <span class="kontak">rsudamparikesit@yahoo.com</span>
         </div>
       </div>
 
@@ -390,7 +377,7 @@
 
 <script>
 // ============================================================
-// ⚙️ URL APPS SCRIPT ANDA (sudah diisi)
+// ⚙️ URL APPS SCRIPT
 // ============================================================
 const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyVFZ5NIHUikuoa-DvL3IYv6PTTp-slo8uKEoAyMxpN3K9o8u4Omsaxp5zdi3r_gEpu6g/exec';
 
